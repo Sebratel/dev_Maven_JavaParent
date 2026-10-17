@@ -1,0 +1,42 @@
+name: Publicar no GitHub Packages
+
+# Publica quando uma Release e criada. A tag define a versao: v1.2.0 publica 1.2.0.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+      - name: Definir versao pela tag
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          ./mvnw -B versions:set -DnewVersion="$V" -DprocessAllModules=true -DgenerateBackupPoms=false
+          ./mvnw -B -f sebratel-java-parent/pom.xml versions:set-property -Dproperty=sebratel-java-build-rules.version -DnewVersion="$V" -DgenerateBackupPoms=false
+      # Duas sessoes do Maven: o parent usa o build-rules como dependencia de plugin e precisa
+      # encontra-lo ja instalado, o que nao acontece dentro do mesmo reactor.
+      - name: Deploy (build-rules)
+        run: ./mvnw -B -pl sebratel-java-build-rules deploy
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy (parent)
+        run: ./mvnw -B -pl sebratel-java-parent deploy
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

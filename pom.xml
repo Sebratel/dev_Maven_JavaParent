@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Agregador do repositorio: so existe para buildar os dois artefatos juntos.
+  Os projetos da Sebratel NAO herdam deste pom; herdam de br.com.sebratel:sebratel-java-parent.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>br.com.sebratel</groupId>
+    <artifactId>sebratel-java-build</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>sebratel-java-build</name>
+    <description>Agregador dos artefatos de regras de build da Sebratel</description>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages - Sebratel</name>
+            <url>https://maven.pkg.github.com/Sebratel/dev_Maven_JavaParent</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>GitHub Packages - Sebratel</name>
+            <url>https://maven.pkg.github.com/Sebratel/dev_Maven_JavaParent</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <modules>
+        <module>sebratel-java-build-rules</module>
+        <module>sebratel-java-parent</module>
+    </modules>
+</project>
